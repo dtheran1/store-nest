@@ -17,6 +17,7 @@ import { ParseIntPipe } from '../common/parse-int/parse-int.pipe';
 
 import { Response, response } from 'express';
 import { ProductsService } from 'src/services/products.service';
+import { CreateProductDto, UpdateProductDto } from 'src/dtos/products.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -58,12 +59,12 @@ export class ProductsController {
   // products?limit=12&offset=333
 
   @Post()
-  create(@Body() payload: any) {
+  create(@Body() payload: CreateProductDto) {
     return this.productService.create(payload);
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() payload: any) {
+  update(@Param('id') id: number, @Body() payload: UpdateProductDto) {
     return this.productService.update(id, payload);
   }
 
