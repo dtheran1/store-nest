@@ -31,6 +31,10 @@ export class ProductsService {
   }
 
   create(payload: CreateProductDto) {
+    console.log(
+      '🚀 ~ file: products.service.ts:38 ~ ProductsService ~ create ~ payload:',
+      payload,
+    );
     const newProduct = { id: this.productsList.length + 1, ...payload };
     this.productsList.push(newProduct);
     return newProduct;
