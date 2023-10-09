@@ -13,9 +13,12 @@ import {
 } from '@nestjs/common';
 
 import { Response, response } from 'express';
+import { ProductsService } from 'src/services/products.service';
 
 @Controller('products')
 export class ProductsController {
+  constructor(private productService: ProductsService) {}
+
   @Get('filter') // Rutas
   getProductFilter() {
     return `Soy un filter`;
@@ -24,16 +27,18 @@ export class ProductsController {
 
   @Get(':id') // Rutas
   @HttpCode(HttpStatus.ACCEPTED) // Establecemos un codigo de respuesta
-  getProduct(@Res() res: Response, @Param('id') id: string) {
+  getProduct(@Param('id') id: string) {
     // Podemos utilizar los status de Express pero lo mas recomendable es usar los decoradores de nest, ahorramos tiempo
-    res.status(200).send({
-      message: `Producto con id ${id}`,
-      id,
-    });
+    // res.status(200).send({
+    //   message: `Producto con id ${id}`,
+    //   id,
+    // });
     // return {
     //   message: `Producto con id ${id}`,
     //   id,
     // };
+
+    return this.productService.findOne(+id);
   }
 
   @Get()
@@ -44,26 +49,31 @@ export class ProductsController {
     // @Query() params: any,
   ) {
     // const { limit, offset, brand } = params;
-    return `products limit=> ${limit} offset=> ${offset} brand=> ${brand}`;
+    // return `products limit=> ${limit} offset=> ${offset} brand=> ${brand}`;
+
+    return this.productService.findAll();
   }
 
   // products?limit=12&offset=333
 
   @Post()
   create(@Body() payload: any) {
-    return {
-      message: 'Product created',
-      payload,
-    };
+    return this.productService.create(payload);
+
+    // return {
+    //   message: 'Product created',
+    //   payload,
+    // };
   }
 
   @Put(':id')
   update(@Param('id') id: number, @Body() payload: any) {
-    return {
-      id,
-      message: 'Product updated',
-      payload,
-    };
+    return this.productService.update(id, payload);
+    // return {
+    //   id,
+    //   message: 'Product updated',
+    //   payload,
+    // };
   }
 
   @Delete(':id')
