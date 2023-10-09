@@ -10,7 +10,10 @@ import {
   HttpCode,
   HttpStatus,
   Res,
+  // ParseIntPipe,
 } from '@nestjs/common';
+
+import { ParseIntPipe } from '../common/parse-int/parse-int.pipe';
 
 import { Response, response } from 'express';
 import { ProductsService } from 'src/services/products.service';
@@ -27,7 +30,9 @@ export class ProductsController {
 
   @Get(':id') // Rutas
   @HttpCode(HttpStatus.ACCEPTED) // Establecemos un codigo de respuesta
-  getProduct(@Param('id') id: string) {
+  getProduct(@Param('id', ParseIntPipe) id: number) {
+    // Con ParseIntPipe parseamos el valor de id a un entero y asi estamos seguros que le pasaremos un number al servicio para que pueda encontrar el dato en BD
+
     // Podemos utilizar los status de Express pero lo mas recomendable es usar los decoradores de nest, ahorramos tiempo
     // res.status(200).send({
     //   message: `Producto con id ${id}`,
@@ -38,7 +43,7 @@ export class ProductsController {
     //   id,
     // };
 
-    return this.productService.findOne(+id);
+    return this.productService.findOne(id);
   }
 
   @Get()
@@ -46,11 +51,7 @@ export class ProductsController {
     @Query('limit') limit = 100, // Si no se pasa valor por defecto es 100
     @Query('offset') offset = 0,
     @Query('brand') brand: string,
-    // @Query() params: any,
   ) {
-    // const { limit, offset, brand } = params;
-    // return `products limit=> ${limit} offset=> ${offset} brand=> ${brand}`;
-
     return this.productService.findAll();
   }
 
@@ -59,27 +60,15 @@ export class ProductsController {
   @Post()
   create(@Body() payload: any) {
     return this.productService.create(payload);
-
-    // return {
-    //   message: 'Product created',
-    //   payload,
-    // };
   }
 
   @Put(':id')
   update(@Param('id') id: number, @Body() payload: any) {
     return this.productService.update(id, payload);
-    // return {
-    //   id,
-    //   message: 'Product updated',
-    //   payload,
-    // };
   }
 
   @Delete(':id')
   delete(@Param('id') id: number) {
-    return {
-      id,
-    };
+    return this.productService.remove(id);
   }
 }
